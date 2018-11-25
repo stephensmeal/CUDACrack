@@ -5,6 +5,7 @@
 
 const int PWD_LENGTH = 5;
 const int HASH_LENGTH = 64;
+const int H_THREADS = 10;
 __constant__ int THREADS = 10;
 __constant__ int CHAR_SET_SIZE = 94;
 __constant__ int ASCII_OFFSET = 33;
@@ -60,8 +61,10 @@ int main(int argc, char *argv[]) {
     // Declare password try arrays
     PwdTryArr *h_passwordTryArr;
     PwdTryArr *d_passwordTryArr;
+	PwdTryArr *h_tryPtr;
 
     // Allocate Host Memory
+    h_tryPtr = (PwdTryArr *)malloc(sizeof(PwdTryArr));
     h_passwordTryArr = (PwdTryArr *)malloc(PWD_TRY_ARR_MEM_SIZE);
 
     // Allocate GPU Memory
@@ -73,15 +76,17 @@ int main(int argc, char *argv[]) {
 
     cudaMemcpy(h_passwordTryArr, d_passwordTryArr, PWD_TRY_ARR_MEM_SIZE, cudaMemcpyDeviceToHost);
 
-    for (PwdTryArr arr : h_passwordTryArr) {
+    h_tryPtr = h_passwordTryArr;
+    
+	for (int j = 0; j < H_THREADS; j++, h_tryPtr++) {
         std::cout << "CREATED PASSWORD: ";
         for (int i = 0; i < PWD_LENGTH; i++) {
-            if (arr->pwdTry[i] != NULL) {
-                std::cout << arr->pwdTry[i];
+            if (h_tryPtr->pwdTry[i] != NULL) {
+                std::cout << h_tryPtr->pwdTry[i];
             }
         }
         std::cout << std::endl;
-    }
+	}
 
     return EXIT_SUCCESS;
 }
