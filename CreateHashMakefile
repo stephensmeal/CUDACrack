@@ -1,0 +1,2 @@
+all: CreateHash.cu
+	nvcc CreateHash.cu -lcudart -lcrypt -Wno-deprecated-gpu-targets -o CreateHash.exe
