@@ -1,0 +1,2 @@
+all: CUDACrack.cu
+	nvcc CUDACrack.cu -lcudart -lcrypt -Wno-deprecated-gpu-targets -o CUDACrack.exe
